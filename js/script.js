@@ -127,3 +127,38 @@ function addEntry(article) {
     bodyDivElement.appendChild(buttonElement);
   }
 }
+
+//post an article
+const form = document.querySelector("form");
+form.addEventListener("submit", (e) => {
+  //stop the browser's default behavior so that the form data is not submitted to the server
+  e.preventDefault();
+  console.log("form click");
+
+  //check if all form controls satisfy the validation constraints
+  const title = document.querySelector("#title");
+  const author = document.querySelector("#author");
+  const content = document.querySelector("#content");
+
+  const formControls = document.querySelectorAll("input, textarea");
+
+  //clear the content of all form control elements by
+  // setting each of their value property to an empty string
+  formControls.forEach((formControl) => {
+    formControl.value = "";
+  });
+  const date = new Date().toString();
+  //create new article object
+  const formObject = {
+    title: title.value,
+    author: author.value,
+    date: date,
+    content: content.value,
+  };
+
+  //insert the article object to the articles array
+  articles.push(formObject);
+
+  //call the addEntry() method to add the entry to the DOM
+  addEntry(formObject);
+});
