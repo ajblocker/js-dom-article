@@ -63,12 +63,15 @@ function addEntry(article) {
   headerDivElement.classList.add("article-header");
   const imgElement = document.createElement("img");
   imgElement.classList.add("avatar");
+  //find index of author
   const authorId = authors.findIndex((author) => {
     return article.author === author;
   });
   if (authorId > -1) {
+    //article author propery can be found
     imgElement.src = `images/avatar${authorId}.png`;
   } else {
+    //article author property cannot be found
     imgElement.src = `images/default.jpeg`;
   }
   imgElement.alt = `avatar picture`;
@@ -87,9 +90,40 @@ function addEntry(article) {
   bodyDivElement.classList.add("article-body");
   const h3Element = document.createElement("h3");
   h3Element.textContent = article.title;
-  const pElement = document.createElement("p");
-  pElement.textContent = article.content;
 
-  bodyDivElement.appendChild(h3Element);
-  bodyDivElement.appendChild(pElement);
+  const pElement = document.createElement("p");
+  if (article.content.length <= MAX_LENGTH) {
+    pElement.textContent = article.content;
+    createArticle.appendChild(bodyDivElement);
+
+    bodyDivElement.appendChild(h3Element);
+    bodyDivElement.appendChild(pElement);
+  } else {
+    //split the article's content to two substrings,
+    // the first substring contains letters from the beginning to MAX_LENGTH
+    let articleSubOne = article.content.substring(0, MAX_LENGTH);
+    //substring contains the rest
+    let articleSubTwo = article.content.substring(MAX_LENGTH);
+
+    //set the content of the p element to the first substring
+    pElement.textContent = articleSubOne;
+    //create span elements
+    const spanElement = document.createElement("span");
+    spanElement.textContent = "...";
+    const spanElementTwo = document.createElement("span");
+    spanElementTwo.classList.add("hidden");
+    spanElementTwo.textContent = articleSubTwo;
+
+    //create button element
+    const buttonElement = document.createElement("button");
+    buttonElement.classList.add("btn");
+    buttonElement.textContent = "Read More";
+
+    //append h3,p, and btn to div with class article-body
+    createArticle.appendChild(bodyDivElement);
+
+    bodyDivElement.appendChild(h3Element);
+    bodyDivElement.appendChild(pElement);
+    bodyDivElement.appendChild(buttonElement);
+  }
 }
