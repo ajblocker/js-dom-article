@@ -92,10 +92,12 @@ function addEntry(article) {
   h3Element.textContent = article.title;
 
   const pElement = document.createElement("p");
+  //check if the length of the content is <= to the max length
   if (article.content.length <= MAX_LENGTH) {
+    //set the content of p
     pElement.textContent = article.content;
+    //append both the h3 element and the p element to the div with class 'article-body'
     createArticle.appendChild(bodyDivElement);
-
     bodyDivElement.appendChild(h3Element);
     bodyDivElement.appendChild(pElement);
   } else {
@@ -110,9 +112,14 @@ function addEntry(article) {
     //create span elements
     const spanElement = document.createElement("span");
     spanElement.textContent = "...";
+    //add class 'hidden' to the element, and set its content to the second substring
     const spanElementTwo = document.createElement("span");
     spanElementTwo.classList.add("hidden");
     spanElementTwo.textContent = articleSubTwo;
+
+    //append span to p element
+    pElement.appendChild(spanElement);
+    pElement.appendChild(spanElementTwo);
 
     //create button element
     const buttonElement = document.createElement("button");
@@ -121,7 +128,6 @@ function addEntry(article) {
 
     //append h3,p, and btn to div with class article-body
     createArticle.appendChild(bodyDivElement);
-
     bodyDivElement.appendChild(h3Element);
     bodyDivElement.appendChild(pElement);
     bodyDivElement.appendChild(buttonElement);
@@ -142,12 +148,8 @@ form.addEventListener("submit", (e) => {
 
   const formControls = document.querySelectorAll("input, textarea");
 
-  //clear the content of all form control elements by
-  // setting each of their value property to an empty string
-  formControls.forEach((formControl) => {
-    formControl.value = "";
-  });
-  const date = new Date().toString();
+  const date = new Date();
+
   //create new article object
   const formObject = {
     title: title.value,
@@ -161,4 +163,61 @@ form.addEventListener("submit", (e) => {
 
   //call the addEntry() method to add the entry to the DOM
   addEntry(formObject);
+
+  //clear the content of all form control elements by
+  // setting each of their value property to an empty string
+  formControls.forEach((formControl) => {
+    formControl.value = "";
+  });
+});
+
+//delete an article
+//add an event listener to the element with class 'articles-wrapper'
+const deleteArticle = document.querySelector(".articles-wrapper");
+deleteArticle.addEventListener("click", (e) => {
+  // check if the event target is a delete button
+  if (e.target.classList.contains("delete-btn")) {
+    //grab the parent element of the event target, which is the article element
+    const articleElement = e.target.parentElement;
+
+    if (articleElement) {
+      //remove the article from the DOM
+      articleElement.remove();
+      // check if there is an article in the array whose title matches that of the article element.
+      // If there is, remove the article from the array
+      const removeArticle = articles.filter((article) => {
+        return (
+          article.title !== articleElement.querySelector(".title").textContent
+        );
+      });
+
+      return removeArticle;
+    }
+  }
+});
+
+//show less/more content
+//Add an event listener to the element with class 'articles-wrapper'
+const showArticle = document.querySelector(".articles-wrapper");
+showArticle.addEventListener("click", (e) => {
+  //check if the event target is a 'read more' button
+  if (e.target.classList.contains("btn")) {
+    // p element is the button's previous sibling element.
+    const pElement = e.target.previousElementSibling;
+    //grab all span elements that are children of the p element.
+    const spans = pElement.querySelectorAll("span");
+
+    //toggle the 'hidden' class on the span elements
+    spans.forEach((span) => {
+      span.classList.toggle("hidden");
+    });
+
+    //update the text content of the button
+    //if it is 'Read More', set it to 'Read Less'
+    if (e.target.textContent === "Read More") {
+      e.target.textContent = "Read Less";
+    } else {
+      e.target.textContent = "Read More";
+    }
+  }
 });
